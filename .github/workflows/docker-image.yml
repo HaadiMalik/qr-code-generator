@@ -1,0 +1,30 @@
+name: Docker Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t qr-code-generator .
+
+      - name: Test Docker container runs successfully
+        run: docker run --rm qr-code-generator --url https://hub.docker.com/r/haadimalik/qr-code-generator
+
+      - name: Verify QR code generation with custom colors
+        run: |
+          docker run --rm \
+            -e FILL_COLOR=blue \
+            -e BACK_COLOR=yellow \
+            qr-code-generator --url https://hub.docker.com/r/haadimalik/qr-code-generator
